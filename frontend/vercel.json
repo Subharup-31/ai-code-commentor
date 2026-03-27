@@ -1,0 +1,20 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/api/scan-repo",
+      "destination": "https://your-backend-url.railway.app/scan-repo"
+    }
+  ],
+  "env": {
+    "NANGO_SECRET_KEY": "@nango-secret-key",
+    "GOOGLE_GENERATIVE_AI_API_KEY": "@google-ai-key",
+    "TELEGRAM_BOT_TOKEN": "@telegram-bot-token",
+    "DATABASE_URL": "@database-url",
+    "NEXT_PUBLIC_WEB_APP_URL": "@web-app-url",
+    "TELEGRAM_WEBHOOK_SECRET": "@telegram-webhook-secret",
+    "NOTION_ACCESS_TOKEN": "@notion-token"
+  }
+}
