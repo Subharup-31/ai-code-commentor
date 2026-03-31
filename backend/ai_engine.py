@@ -18,7 +18,7 @@ load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 # Using a reliable free model — deepseek-r1 is consistently available on OpenRouter
-MODEL_NAME = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-r1:free")
+MODEL_NAME = os.getenv("OPENROUTER_MODEL", "stepfun/step-3.5-flash:free")
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 _OPENROUTER_HEADERS = {
     "Authorization": f"Bearer {OPENROUTER_API_KEY}",

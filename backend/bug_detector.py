@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-MODEL_NAME = "nvidia/nemotron-3-super-120b-a12b:free"
+MODEL_NAME = "stepfun/step-3.5-flash:free"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 _OPENROUTER_HEADERS = {
     "Authorization": f"Bearer {OPENROUTER_API_KEY}",
