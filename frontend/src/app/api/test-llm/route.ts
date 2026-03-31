@@ -11,34 +11,34 @@ export async function GET() {
         fallback: { status: 'unknown', error: null as string | null },
     };
 
-    // Test Primary Gemini
+    // Test Primary OpenRouter model
     try {
-        console.log('[Test] Testing primary Gemini model...');
+        console.log('[Test] Testing primary OpenRouter model...');
         const { text } = await generateText({
             model: primaryModel,
             prompt: 'Say "OK"',
         });
         results.primary.status = text ? '✅ Working' : '⚠️ Empty response';
-        console.log('[Test] Primary Gemini:', results.primary.status, '-', text);
+        console.log('[Test] Primary OpenRouter:', results.primary.status, '-', text);
     } catch (err: any) {
         results.primary.status = '❌ Failed';
         results.primary.error = err.message;
-        console.error('[Test] Primary Gemini failed:', err.message);
+        console.error('[Test] Primary OpenRouter failed:', err.message);
     }
 
-    // Test Secondary Gemini
+    // Test Secondary OpenRouter model
     try {
-        console.log('[Test] Testing secondary Gemini model...');
+        console.log('[Test] Testing secondary OpenRouter model...');
         const { text } = await generateText({
             model: secondaryModel,
             prompt: 'Say "OK"',
         });
         results.secondary.status = text ? '✅ Working' : '⚠️ Empty response';
-        console.log('[Test] Secondary Gemini:', results.secondary.status, '-', text);
+        console.log('[Test] Secondary OpenRouter:', results.secondary.status, '-', text);
     } catch (err: any) {
         results.secondary.status = '❌ Failed';
         results.secondary.error = err.message;
-        console.error('[Test] Secondary Gemini failed:', err.message);
+        console.error('[Test] Secondary OpenRouter failed:', err.message);
     }
 
     // Test OpenRouter Fallback
@@ -49,20 +49,18 @@ export async function GET() {
             prompt: 'Say "OK"',
         });
         results.fallback.status = text ? '✅ Working' : '⚠️ Empty response';
-        console.log('[Test] OpenRouter:', results.fallback.status, '-', text);
+        console.log('[Test] OpenRouter fallback:', results.fallback.status, '-', text);
     } catch (err: any) {
         results.fallback.status = '❌ Failed';
         results.fallback.error = err.message;
-        console.error('[Test] OpenRouter failed:', err.message);
+        console.error('[Test] OpenRouter fallback failed:', err.message);
     }
 
     return NextResponse.json({
         message: 'LLM Configuration Test Results',
         environment: {
-            primaryKeySet: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-            secondaryKeySet: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY_2,
             openRouterKeySet: !!process.env.OPENROUTER_API_KEY,
-            keysIdentical: process.env.GOOGLE_GENERATIVE_AI_API_KEY === process.env.GOOGLE_GENERATIVE_AI_API_KEY_2,
+            openRouterModel: process.env.OPENROUTER_MODEL || 'stepfun/step-3.5-flash:free (default)',
         },
         results,
     });

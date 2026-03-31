@@ -10,7 +10,6 @@
     "db:init": "tsx scripts/init-db.ts"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.43",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.118",
     "@mastra/core": "^1.10.0",
@@ -46,5 +45,11 @@
     "tailwindcss": "^4",
     "tsx": "^4.7.0",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19",
+      "@types/react-dom": "^19"
+    }
   }
 }

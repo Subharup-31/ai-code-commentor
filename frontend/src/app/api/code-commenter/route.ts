@@ -11,6 +11,12 @@ export async function POST(req: Request) {
   try {
     const { filePath, fileContent, prompt } = await req.json();
 
+    // Add line numbers to the original code so the AI can reference them
+    const numberedCode = fileContent
+      .split('\n')
+      .map((line: string, index: number) => `${index + 1}: ${line}`)
+      .join('\n');
+
     const result = await streamText({
       model: openrouter("stepfun/step-3.5-flash:free"),
       system: `You are a friendly code documentation assistant. Your job is to add clear, easy-to-understand comments to code.
@@ -21,9 +27,14 @@ RULES:
 - For each function: explain what it does, what goes in (inputs), and what comes out (output)
 - For complex logic: add a short inline comment explaining what's happening and WHY
 - Keep comments concise — one or two lines max per comment
-- Do NOT change any actual code logic, only add comments
-- Return ONLY the commented code. No markdown code fences, no explanations, no greetings. Just the raw code with comments.`,
-      prompt: `User Prompt: ${prompt}\n\nFile Path: ${filePath}\n\nOriginal Code:\n\n${fileContent}`,
+- Do NOT return the full source code or change any logic.
+- ONLY return the comments you want to add, indicating the line number BEFORE which the comment should be inserted. Use this format:
+Line [Number]: [// Your comment]
+
+Example output:
+Line 5: // This function calculates the total price
+Line 12: // Loop through all items to sum them up`,
+      prompt: `User Prompt: ${prompt}\n\nFile Path: ${filePath}\n\nOriginal Code (with line numbers):\n\n${numberedCode}`,
     });
 
     return result.toTextStreamResponse();

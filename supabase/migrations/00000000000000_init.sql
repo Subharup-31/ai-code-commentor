@@ -5,6 +5,7 @@
 CREATE TABLE public.profiles (
   id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL PRIMARY KEY,
   email text,
+  username text,
   created_at timestamptz DEFAULT now() NOT NULL,
   updated_at timestamptz DEFAULT now() NOT NULL
 );
@@ -87,8 +88,8 @@ USING ( user_id = auth.uid() );
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email)
-  VALUES (new.id, new.email);
+  INSERT INTO public.profiles (id, email, username)
+  VALUES (new.id, new.email, new.raw_user_meta_data->>'username');
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

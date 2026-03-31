@@ -317,7 +317,7 @@ def _snippet_at_line(content: str, line: int, context: int = 6) -> str:
 
 async def detect_bugs_in_file(rel_path: str, content: str) -> list[dict]:
     """
-    Ask Gemini to find all bugs in a single source file.
+    Ask OpenRouter AI to find all bugs in a single source file.
     Returns a list of bug findings in the unified VulnerabilityResult format.
     """
     if not OPENROUTER_API_KEY:

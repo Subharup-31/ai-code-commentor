@@ -108,9 +108,9 @@ export async function POST(req: Request) {
                 
                 // Log which model is being used
                 if (agentName === 'masterAgent') {
-                    console.log('[Chat API] 🔄 Primary Gemini key failed, trying secondary...');
+                    console.log('[Chat API] 🔄 Primary OpenRouter model failed, trying secondary...');
                 } else if (agentName === 'secondaryAgent') {
-                    console.log('[Chat API] 🔄 Secondary Gemini key failed, trying OpenRouter fallback...');
+                    console.log('[Chat API] 🔄 Secondary OpenRouter model failed, trying fallback...');
                 } else if (agentName === 'fallbackAgent') {
                     console.log('[Chat API] 💥 OpenRouter fallback also failed - all options exhausted');
                 }
@@ -119,15 +119,15 @@ export async function POST(req: Request) {
 
         if (!responseText) {
             let userMessage =
-                "All AI providers are currently unavailable. Please check your API keys (Gemini, OpenRouter) and try again.";
+                "All AI providers are currently unavailable. Please check your OPENROUTER_API_KEY and try again.";
             if (lastError?.isRateLimit) {
                 userMessage =
-                    "API rate limit or quota exceeded. Please wait a few minutes and try again. If this persists, check your Gemini/OpenRouter usage limits.";
+                    "API rate limit or quota exceeded. Please wait a few minutes and try again. If this persists, check your OpenRouter usage limits.";
             } else if (lastError?.message) {
                 const lower = lastError.message.toLowerCase();
                 if (lower.includes('api key') || lower.includes('invalid') || lower.includes('unauthorized')) {
                     userMessage =
-                        "Invalid or missing API key. Please verify GOOGLE_GENERATIVE_AI_API_KEY and OPENROUTER_API_KEY in your .env.local.";
+                        "Invalid or missing API key. Please verify OPENROUTER_API_KEY in your .env.local.";
                 } else if (lower.includes('model') || lower.includes('not found')) {
                     userMessage =
                         "Model configuration error. The AI model may not be available. Please check your model names in llm.ts.";

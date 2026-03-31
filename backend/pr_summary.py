@@ -5,7 +5,7 @@ Mirrors CodeRabbit's most visible feature: the walkthrough comment.
 
 import os
 import httpx
-from ai_engine import call_gemini
+from ai_engine import call_openrouter_general
 
 
 async def generate_pr_summary(
@@ -72,7 +72,7 @@ Generate a markdown PR review summary with these exact sections:
 Be concise, technical, and actionable. Use emojis sparingly."""
 
     try:
-        summary = await call_gemini(prompt)
+        summary = await call_openrouter_general(prompt)
         return summary
     except Exception as e:
         # Fallback: generate without AI
@@ -135,7 +135,7 @@ async def post_pr_summary_comment(
     comment_body = f"""<!-- vulnguard-summary -->
 # 🛡️ VulnGuard AI — Code Review {status_badge}
 
-> Automated security review powered by VulnGuard AI · Semgrep · Bandit · Gemini 2.5
+> Automated security review powered by VulnGuard AI · Semgrep · Bandit · OpenRouter AI
 
 {summary_md}
 

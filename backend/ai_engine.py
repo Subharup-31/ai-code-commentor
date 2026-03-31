@@ -137,21 +137,36 @@ async def _call_openrouter(prompt: str, retries: int = 3) -> str:
     raise last_exc
 
 
-async def call_gemini(prompt: str) -> str:
-    """Call the direct Google Gemini API for general tasks like PR summaries."""
-    import google.generativeai as genai
-    gemini_key = os.getenv("GEMINI_API_KEY", "")
-    if not gemini_key:
-        raise ValueError("GEMINI_API_KEY not set")
-    
-    genai.configure(api_key=gemini_key)
-    model = genai.GenerativeModel("gemini-2.5-flash")
-    
-    # Run in thread pool as genai.generate_content is blocking
-    loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, model.generate_content, prompt)
-    return response.text
+async def call_openrouter_general(prompt: str, retries: int = 3) -> str:
+    """Call OpenRouter for general (non-JSON) tasks like PR summaries and explanations."""
+    payload = {
+        "model": MODEL_NAME,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    last_exc: Exception = RuntimeError("No attempts made")
+    for attempt in range(retries):
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                resp = await client.post(OPENROUTER_API_URL, json=payload, headers=_OPENROUTER_HEADERS)
+                resp.raise_for_status()
+                text = resp.json()["choices"][0]["message"]["content"].strip()
+            # Strip markdown code fences if present
+            if text.startswith("```"):
+                lines = text.split("\n")
+                text = "\n".join(lines[1:])
+                if text.endswith("```"):
+                    text = text[:-3]
+                text = text.strip()
+            return text
+        except (httpx.HTTPStatusError, httpx.TimeoutException) as exc:
+            last_exc = exc
+            if attempt < retries - 1:
+                await asyncio.sleep(2 ** attempt)
+    raise last_exc
 
+
+# Keep backward compatibility alias
+call_gemini = call_openrouter_general
 
 
 async def _skeptic_review(vuln: dict, pass1: dict) -> dict:
@@ -204,7 +219,7 @@ async def _skeptic_review(vuln: dict, pass1: dict) -> dict:
     return pass1
 
 
-async def analyze_vulnerability(vuln: dict) -> dict:
+async def analyze_vulnerability(vuln: dict, extra_context: str = "") -> dict:
     """
     Two-pass vulnerability analysis:
       Pass 1 — Triage: assigns confidence, exploitability, explanation, fix.

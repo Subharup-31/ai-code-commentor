@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { createBrowserClient } from "@supabase/ssr";
 
 const TELEGRAM_BOT_URL = process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL || 'https://t.me/VulnGuardAIBot';
 
@@ -153,7 +154,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="px-3 py-3 border-t border-[#27272a]">
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg bg-transparent hover:bg-[#18181b] text-[#71717a] hover:text-[#a1a1aa] transition-colors"
+                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg bg-transparent hover:bg-[#18181b] text-[#71717a] hover:text-[#a1a1aa] transition-colors"
                         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                     >
                         <svg
@@ -165,6 +166,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </svg>
                         {!collapsed && (
                             <span className="text-[13px] font-medium">Collapse</span>
+                        )}
+                    </button>
+                </div>
+                
+                {/* Logout Button */}
+                <div className="px-3 py-3 border-t border-[#27272a]">
+                    <button
+                        onClick={async () => {
+                            const supabase = createBrowserClient(
+                                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+                            );
+                            await supabase.auth.signOut();
+                            window.location.href = "/login";
+                        }}
+                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg bg-transparent hover:bg-red-500/10 text-[#71717a] hover:text-red-400 transition-colors"
+                        title={collapsed ? "Log out" : "Log out"}
+                    >
+                        <svg
+                            className="w-[18px] h-[18px] transition-transform duration-200 shrink-0"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H8.25" />
+                        </svg>
+                        {!collapsed && (
+                            <span className="text-[13px] font-medium">Log out</span>
                         )}
                     </button>
                 </div>

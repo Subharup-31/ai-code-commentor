@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-
+import { parseAndApplyComments } from "@/lib/code-utils";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type MessageRole = "user" | "assistant";
@@ -271,7 +271,8 @@ export default function CommenterChat({
                     accumulated += decoder.decode(value, { stream: true });
 
                     // Stream into code viewer live
-                    onCodeUpdate(accumulated);
+                    const mergedCode = parseAndApplyComments(fileContent, accumulated);
+                    onCodeUpdate(mergedCode);
 
                     // Update the code bubble in chat
                     setMessages(prev => {
@@ -281,7 +282,8 @@ export default function CommenterChat({
                         return clone;
                     });
                 }
-                onCodeUpdate(accumulated); // final flush
+                const finalMergedCode = parseAndApplyComments(fileContent, accumulated);
+                onCodeUpdate(finalMergedCode); // final flush
             }
 
             setMessages(prev => [

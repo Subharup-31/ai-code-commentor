@@ -80,7 +80,7 @@ async def handle_explain(
     headers: dict,
 ) -> None:
     """AI explains the code/finding referenced in the comment."""
-    from ai_engine import call_gemini
+    from ai_engine import call_openrouter_general
 
     prompt = f"""A developer asked VulnGuard AI to explain the following in the context of a code review:
 
@@ -95,7 +95,7 @@ Provide a clear, concise technical explanation (3-5 paragraphs max). Focus on:
 Format your response as a GitHub markdown comment."""
 
     try:
-        explanation = await call_gemini(prompt)
+        explanation = await call_openrouter_general(prompt)
         response = f"🤖 **VulnGuard AI — Explanation**\n\n{explanation}"
     except Exception:
         response = (
